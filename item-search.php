@@ -160,14 +160,22 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         } else {
                                             echo "0 results";
                                         }
-                                    } else if (isset($_POST['btnsearch'])) { // do search 
+                                    } else if (isset($_POST['btnsearch'])) {
+                                        
+
+
+// do search 
                                         $item_name = $_POST['item_name'];
                                         $category_code = $_POST['category_code'];
                                         $brand = $_POST['brand'];
                                         $qty = $_POST['qty'];
                                         $store_area = $_POST['store_area'];
 
-                                        $sql = "SELECT * FROM item WHERE item_name = '$item_name'";
+                                        $sql = "SELECT * FROM item ". dynamicWhereBuilder();
+                                        echo 'SQL :'. $sql;
+                                        
+                                        
+                                       
                                         
                                         $result = mysqli_query($con_s, $sql);
 
@@ -191,15 +199,47 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         } else {
                                             echo "0 results";
                                         }
+                                        
+                                       
                                     }
                                     mysqli_close($con_s);
+
+                                    function dynamicWhereBuilder() {
+                                      
+                                        $sql = "";
+                                        $x = 0;
+                                        
+                                        $item_name = $_POST['item_name'];
+                                        $category_code = $_POST['category_code'];
+                                        $brand = $_POST['brand'];
+                                        $qty = $_POST['qty'];
+                                        $store_area = $_POST['store_area'];
+
+                                        if ($_POST['item_name'] != "") {
+                                            $sql = " item_name LIKE '%$item_name%' ";
+                                            $x = 1;
+                                        }
+                                        
+                                        if ($_POST['category_code'] != "") {
+                                            if($x == 1){
+                                              $sql = $sql . ' AND '  ;
+                                            }
+                                            $sql = $sql . " category_code = '$category_code' ";
+                                            $x = 1;
+                                        }
+                                        
+                                        if($sql!=''){
+                                           $sql = ' WHERE ' . $sql; 
+                                        }
+                                        return $sql;
+                                    }
                                     ?>
 
 
 
 
 
-                                   
+
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
