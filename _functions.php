@@ -60,7 +60,7 @@ function doLogin() {
      */
 }
 
-function addItem() {
+function addItem($file_name) {
     //insert into table
      $conn = getDBConnection();
     
@@ -81,7 +81,7 @@ VALUES ('".$_POST['item_name']."',
         '".$_POST['selling_price']."',
         '".$_POST['description']."',
         '".$_POST['qty']."',
-        'sample.jpg',
+        '$file_name',
         '".$_POST['store_area']."'); ";
 
     if (mysqli_query($conn, $sql)) {
