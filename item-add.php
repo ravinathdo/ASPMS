@@ -160,8 +160,37 @@ include './_functions.php';
 
 
                                     if (isset($_POST['btnadditem'])) {
+
+
+                                        $errors = array();
+                                        $file_name = $_FILES['image']['name'];
+                                        $file_size = $_FILES['image']['size'];
+                                        $file_tmp = $_FILES['image']['tmp_name'];
+                                        $file_type = $_FILES['image']['type'];
+                                        $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
+
+                                        $expensions = array("jpeg", "jpg", "png");
+
+                                        if (in_array($file_ext, $expensions) === false) {
+                                            $errors[] = "extension not allowed, please choose a JPEG or PNG file.";
+                                        }
+
+                                        if ($file_size > 2097152) {
+                                            $errors[] = 'File size must be excately 2 MB';
+                                        }
+                                        if (empty($errors) == true) {
+                                            move_uploaded_file($file_tmp, "item_images/" . $file_name);
+                                            //add data into item table
+                                            echo "Success";
+                                                      addItem($file_name);
+                                        } else {
+                                            print_r($errors);
+                                        }
+
+
+                                      
                                         
-                                        addItem();
+                                        
                                     }
                                     ?>
 
@@ -196,15 +225,15 @@ include './_functions.php';
                                     if (mysqli_num_rows($result) > 0) {
                                         // output data of each row
                                         while ($row = mysqli_fetch_assoc($result)) {
-                                           // echo "id: " . $row["item_name"] . " - Name: " . $row["firstname"] . " " . $row["lastname"] . "<br>";
+                                            // echo "id: " . $row["item_name"] . " - Name: " . $row["firstname"] . " " . $row["lastname"] . "<br>";
                                             ?>
                                             <tr>
-                                                <td><?php echo $row["id"]?></td>
-                                                <td><?php echo $row["item_name"]?></td>
-                                                <td><?php echo $row["category_code"]?></td>
-                                                <td><span class="btn-primary"> <?php echo $row["store_area"]?> </span>&nbsp;</td>
-                                                <td><?php echo $row["qty"]?></td>
-                                                <td><?php echo $row["description"]?></td>
+                                                <td><?php echo $row["id"] ?></td>
+                                                <td><?php echo $row["item_name"] ?></td>
+                                                <td><?php echo $row["category_code"] ?></td>
+                                                <td><span class="btn-primary"> <?php echo $row["store_area"] ?> </span>&nbsp;</td>
+                                                <td><?php echo $row["qty"] ?></td>
+                                                <td><?php echo $row["description"] ?></td>
                                                 <td><a href="item-update.php">Update</a></td>
                                                 <td><i class="fa fa-times" aria-hidden="true"></i></td>
                                             </tr>
@@ -219,7 +248,7 @@ include './_functions.php';
 
 
 
-                                   
+
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
