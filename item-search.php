@@ -1,4 +1,7 @@
-     
+<?php
+session_start();
+include './_functions.php';
+?>
 <!--
 Author: W3layouts
 Author URL: http://w3layouts.com
@@ -74,42 +77,31 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         <table width="100%" border="0" cellspacing="5" cellpadding="0">
                                             <tr>
                                                 <td width="15%">Item Name</td>
-                                                <td width="47%"><input type="text" name="textfield" id="textfield"></td>
+                                                <td width="47%"><input type="text" name="item_name" id="item_name"></td>
                                                 <td width="28%">Store Area</td>
-                                                <td width="10%"><select name="select2" id="select2">
-                                                        <option>--select--</option>
+                                                <td width="10%"><select name="store_area" id="store_area">
+                                                        <option value="">--select--</option>
                                                         <option>E1</option>
                                                         <option>E2</option>
                                                     </select></td>
                                             </tr>
                                             <tr>
                                                 <td>Category</td>
-                                                <td><select name="select" id="select">
-                                                        <option>--select--</option>
+                                                <td><select name="category_code" id="category_code">
+                                                        <option value="">--select--</option>
+                                                        <option value="Engine">Engine</option>
                                                     </select></td>
-                                                <td>&nbsp;</td>
-                                                <td>&nbsp;</td>
+                                                <td>Qty</td>
+                                                <td><input type="text" name="qty" id="qty"></td>
                                             </tr>
                                             <tr>
                                                 <td>Brand</td>
-                                                <td><input type="text" name="textfield2" id="textfield2"></td>
-                                                <td>Buying Price</td>
-                                                <td><input type="text" name="textfield3" id="textfield3"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Description</td>
-                                                <td><textarea name="textarea" id="textarea"></textarea></td>
-                                                <td>Selling Price</td>
-                                                <td><input type="text" name="textfield4" id="textfield4"></td>
-                                            </tr>
-                                            <tr>
+                                                <td><input type="text" name="brand" id="brand"></td>
+                                                <td></td>
                                                 <td>&nbsp;</td>
-                                                <td><input type="submit" value="Search"/></td>
-                                                <td>Qty</td>
-                                                <td><input type="text" name="textfield5" id="textfield5"></td>
                                             </tr>
                                             <tr>
-                                                <td>&nbsp;</td>
+                                                <td><input type="submit" value="Search" name="btnsearch"/></td>
                                                 <td>&nbsp;</td>
                                                 <td>&nbsp;</td>
                                                 <td>&nbsp;</td>
@@ -127,7 +119,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-bordered">
                                     <tr class="success">
-                                      <td width="7%"><strong>Item No</strong></td>
+                                        <td width="7%"><strong>Item No</strong></td>
                                         <td width="13%"><strong>Item Name</strong></td>
                                         <td width="8%"><strong>Category</strong></td>
                                         <td width="10%"><strong>Stock Area</strong></td>
@@ -136,28 +128,80 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         <td width="10%">&nbsp;</td>
                                         <td width="10%">&nbsp;</td>
                                     </tr>
+
+
+
+                                    <?php
+                                    $con_s = getDBConnection();
+
+                                    if (!isset($_POST['btnsearch'])) {
+
+                                        //show item list
+                                        $sql = "SELECT * FROM item";
+                                        $result = mysqli_query($con_s, $sql);
+
+                                        if (mysqli_num_rows($result) > 0) {
+                                            // output data of each row
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                // echo "id: " . $row["item_name"] . " - Name: " . $row["firstname"] . " " . $row["lastname"] . "<br>";
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $row["id"] ?></td>
+                                                    <td><?php echo $row["item_name"] ?></td>
+                                                    <td><?php echo $row["category_code"] ?></td>
+                                                    <td><span class="btn-primary"> <?php echo $row["store_area"] ?> </span>&nbsp;</td>
+                                                    <td><?php echo $row["qty"] ?></td>
+                                                    <td><?php echo $row["description"] ?></td>
+                                                    <td><a href="item-info.php">view</a></td>
+                                                    <td></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        } else {
+                                            echo "0 results";
+                                        }
+                                    } else if (isset($_POST['btnsearch'])) { // do search 
+                                        $item_name = $_POST['item_name'];
+                                        $category_code = $_POST['category_code'];
+                                        $brand = $_POST['brand'];
+                                        $qty = $_POST['qty'];
+                                        $store_area = $_POST['store_area'];
+
+                                        $sql = "SELECT * FROM item WHERE item_name = '$item_name'";
+                                        
+                                        $result = mysqli_query($con_s, $sql);
+
+                                        if (mysqli_num_rows($result) > 0) {
+                                            // output data of each row
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                // echo "id: " . $row["item_name"] . " - Name: " . $row["firstname"] . " " . $row["lastname"] . "<br>";
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $row["id"] ?></td>
+                                                    <td><?php echo $row["item_name"] ?></td>
+                                                    <td><?php echo $row["category_code"] ?></td>
+                                                    <td><span class="btn-primary"> <?php echo $row["store_area"] ?> </span>&nbsp;</td>
+                                                    <td><?php echo $row["qty"] ?></td>
+                                                    <td><?php echo $row["description"] ?></td>
+                                                    <td><a href="item-info.php">view</a></td>
+                                                    <td></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        } else {
+                                            echo "0 results";
+                                        }
+                                    }
+                                    mysqli_close($con_s);
+                                    ?>
+
+
+
+
+
+                                   
                                     <tr>
-                                      <td>1</td>
-                                        <td>Engin-Toyota</td>
-                                        <td>Engin</td>
-                                        <td><span class="btn-primary"> E1 </span>&nbsp;</td>
-                                        <td>10</td>
-                                        <td>On  the Insert tab, the galleries include items that are designed </td>
-                                        <td><a href="item-info.php">view</a></td>
-                                        <td><i class="fa fa-times" aria-hidden="true"></i></td>
-                                    </tr>
-                                    <tr>
-                                      <td>2</td>
-                                        <td>Radiator-Toyota</td>
-                                        <td>Radiator</td>
-                                        <td><span class="btn-primary">E1 </span>&nbsp;</td>
-                                        <td>20</td>
-                                        <td>On  the Insert tab, the galleries include items that are designed </td>
                                         <td>&nbsp;</td>
-                                        <td><i class="fa fa-times" aria-hidden="true"></i></td>
-                                    </tr>
-                                    <tr>
-                                      <td>&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
@@ -191,7 +235,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                     </a> 
                 </header>
                 <div style="border-top:1px solid rgba(69, 74, 84, 0.7)">
-                  <input type="submit" value="Search Item"/>
+                    <input type="submit" value="Search Item"/>
                 </div>
                 <!--/down-->
                 <div class="down">	
@@ -206,7 +250,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 </div>
                 <!--//down-->
                 <div class="menu">
-                   <?php include('menu-customer.php')?>
+<?php include('menu-customer.php') ?>
                 </div>
             </div>
             <div class="clearfix"></div>		
